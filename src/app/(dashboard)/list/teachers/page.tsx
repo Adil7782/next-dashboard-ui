@@ -102,7 +102,7 @@ return( <tr key={item.id} className='border-b border-gray-200 even:bg-slate-50 t
     <>
     <div className='bg-white  mx-4 p-4  flex-1 rounded-xl'>
         <div className='flex justify-between items-center'>
-        <h1 className='text-lg  hidden md:block font-semibold '>All teachers</h1>
+        <h1 className='text-lg  hidden md:block font-semibold '>All Teachers</h1>
         <div className='flex flex-col md:flex-row items-center gap-8 w-full md:w-auto'>
         <TableSearch/>
         <div className='flex gap-4'>

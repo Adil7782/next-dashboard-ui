@@ -1,7 +1,7 @@
 import Pagination from '@/app/components/Pagination'
 import Table from '@/app/components/Table'
 import TableSearch from '@/app/components/TableSearch'
-import { parentsData, role, studentsData, teachersData } from '@/lib/data'
+import { eventsData, examsData, parentsData, role, studentsData, teachersData } from '@/lib/data'
 import { headers } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -9,63 +9,68 @@ import React from 'react'
 
 const columns = [
     {
-        header:"Info",
-        accessor:"info"
+        header:"Subject",
+        accessor:"subject"
     },
     {
-        header:"Student Names",
-        accessor:"students",
+        header:"Class",
+        accessor:"class",
         className :"hidden md:table-cell"
+    },
+    {
+        header:"Date",
+        accessor:"date",
+        className :"hidden lg:table-cell"
     },
     
     {
-        header:"Phone",
-        accessor:"phone",
+        header:"Start Time",
+        accessor:"startTime",
         className :"hidden lg:table-cell"
     },
     {
-        header:"Address",
-        accessor:"address",
+        header:"End Time",
+        accessor:"endTime",
         className :"hidden lg:table-cell"
-    },{
+    },
+    {
         header:"Action",
         accessor:"action"
     }
     
 ]
 
-type Parent ={
-    id:number;
-
-    students:string[];
-    name:string;
-    email?:string;
-    phone:string;
- 
-    address:string
+type Events ={
+    id: number,
+    title: string,
+    class: string,
+    date: string,
+    startTime: string,
+    endTime:string ,
 }
 
-const ParentList = () => {
+const EventList = () => {
     
-    const renderRow =(item:Parent) =>{
+    const renderRow =(item:Events) =>{
 return( <tr key={item.id} className='border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight'>
           <td className='flex items-center p-3 gap-3'>
            
 
             <div className="flex flex-col">
-              <h1 className="font-semibold">{item.name}</h1>
-              <p className="text-xs text-gray-500">{item?.email}</p>
+              <h1 className="font-semibold">{item.title}</h1>
+    
             </div>
           </td>
 
-          <td className="hidden md:table-cell text-sm">{item.students.join(",")} </td>        
-          <td className="hidden md:table-cell text-sm"> {item.phone} </td>
-          <td className="hidden md:table-cell text-sm"> {item.address} </td>
+          <td className="hidden md:table-cell text-sm">{item.class} </td>        
+          <td className="hidden md:table-cell text-sm"> {item.date} </td>
+          <td className="hidden md:table-cell text-sm"> {item.startTime} </td>
+          <td className="hidden md:table-cell text-sm"> {item.endTime} </td>
           <td>
             <div className="flex gap-2 items-center">
               <Link href={`list/students/${item.id}`}>
                 <button className="w-7 h-7 rounded-full flex items-center justify-center bg-lamaSky">
-                  <Image src={"/edit.png"} alt="" width={16} height={16} />
+                  <Image src={"/view.png"} alt="" width={16} height={16} />
                 </button>
               </Link>
 
@@ -84,7 +89,7 @@ return( <tr key={item.id} className='border-b border-gray-200 even:bg-slate-50 t
     <>
     <div className='bg-white  mx-4 p-4  flex-1 rounded-xl'>
         <div className='flex justify-between items-center'>
-        <h1 className='text-lg  hidden md:block font-semibold '>All Parents</h1>
+        <h1 className='text-lg  hidden md:block font-semibold '>All Exams</h1>
         <div className='flex flex-col md:flex-row items-center gap-8 w-full md:w-auto'>
         <TableSearch/>
         <div className='flex gap-4'>
@@ -106,7 +111,7 @@ return( <tr key={item.id} className='border-b border-gray-200 even:bg-slate-50 t
         </div>
         </div>
         <div>
-        <Table columns={columns} renderRow={renderRow} data={parentsData}/>
+        <Table columns={columns} renderRow={renderRow} data={eventsData}/>
         </div>
       
         <Pagination/>
@@ -116,4 +121,4 @@ return( <tr key={item.id} className='border-b border-gray-200 even:bg-slate-50 t
   )
 }
 
-export default ParentList
+export default EventList
