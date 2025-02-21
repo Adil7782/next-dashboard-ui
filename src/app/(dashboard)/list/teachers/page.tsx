@@ -1,3 +1,4 @@
+import FormComponent from '@/app/components/FormComponent'
 import Pagination from '@/app/components/Pagination'
 import Table from '@/app/components/Table'
 import TableSearch from '@/app/components/TableSearch'
@@ -88,9 +89,12 @@ return( <tr key={item.id} className='border-b border-gray-200 even:bg-slate-50 t
               </Link>
 
               { role === "admin" && 
-                <button className="w-7 h-7 rounded-full flex items-center justify-center bg-lamaPurple">
-                  <Image src={"/delete.png"} alt="" width={16} height={16} />
-                </button>
+                // <button className="w-7 h-7 rounded-full flex items-center justify-center bg-lamaPurple">
+                //   <Image src={"/delete.png"} alt="" width={16} height={16} />
+                // </button>
+
+              <FormComponent type='delete' table='teacher' id={item.id} />
+
               }
             </div>
           </td>
@@ -116,10 +120,14 @@ return( <tr key={item.id} className='border-b border-gray-200 even:bg-slate-50 t
             </button>
             {
               role === "admin" && 
-              <button className='bg-lamaYellow items-center justify-center h-8 w-8 rounded-full flex '>
-        <Image src="/plus.png" alt='' width={14} height={14}/>
+        //       <button className='bg-lamaYellow items-center justify-center h-8 w-8 rounded-full flex '>
+        // <Image src="/plus.png" alt='' width={14} height={14}/>
 
-            </button>}
+        //     </button>
+            
+              <FormComponent type='create' table='teacher'  />
+
+            }
         </div>
         </div>
         </div>

@@ -1,3 +1,4 @@
+import FormComponent from '@/app/components/FormComponent'
 import Pagination from '@/app/components/Pagination'
 import Table from '@/app/components/Table'
 import TableSearch from '@/app/components/TableSearch'
@@ -48,35 +49,40 @@ type Parent ={
 const ParentList = () => {
     
     const renderRow =(item:Parent) =>{
-return( <tr key={item.id} className='border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight'>
-          <td className='flex items-center p-3 gap-3'>
-           
+return (
+  <tr
+    key={item.id}
+    className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
+  >
+    <td className="flex items-center p-3 gap-3">
+      <div className="flex flex-col">
+        <h1 className="font-semibold">{item.name}</h1>
+        <p className="text-xs text-gray-500">{item?.email}</p>
+      </div>
+    </td>
 
-            <div className="flex flex-col">
-              <h1 className="font-semibold">{item.name}</h1>
-              <p className="text-xs text-gray-500">{item?.email}</p>
-            </div>
-          </td>
-
-          <td className="hidden md:table-cell text-sm">{item.students.join(",")} </td>        
-          <td className="hidden md:table-cell text-sm"> {item.phone} </td>
-          <td className="hidden md:table-cell text-sm"> {item.address} </td>
-          <td>
-            <div className="flex gap-2 items-center">
-              <Link href={`list/students/${item.id}`}>
-                <button className="w-7 h-7 rounded-full flex items-center justify-center bg-lamaSky">
+    <td className="hidden md:table-cell text-sm">{item.students.join(",")} </td>
+    <td className="hidden md:table-cell text-sm"> {item.phone} </td>
+    <td className="hidden md:table-cell text-sm"> {item.address} </td>
+    <td>
+      <div className="flex gap-2 items-center">
+      {role === "admin" && (
+        <>
+      
+       
+          {/* <button className="w-7 h-7 rounded-full flex items-center justify-center bg-lamaSky">
                   <Image src={"/edit.png"} alt="" width={16} height={16} />
-                </button>
-              </Link>
-
-              { role === "admin" && 
-                <button className="w-7 h-7 rounded-full flex items-center justify-center bg-lamaPurple">
-                  <Image src={"/delete.png"} alt="" width={16} height={16} />
-                </button>
-              }
-            </div>
-          </td>
-        </tr>)
+                </button> */}
+          <FormComponent type="update" table="parent" data={item} />
+   
+       
+          <FormComponent type="delete" table="parent" id={item.id} />
+          </>
+        )}
+      </div>
+    </td>
+  </tr>
+);
     }
 
 
@@ -98,10 +104,8 @@ return( <tr key={item.id} className='border-b border-gray-200 even:bg-slate-50 t
             </button>
             {
                 role === "admin" && 
-                <button className='bg-lamaYellow items-center justify-center h-8 w-8 rounded-full flex '>
-        <Image src="/plus.png" alt='' width={14} height={14}/>
-
-            </button>}
+                <FormComponent type='create' table='parent'  />
+}
         </div>
         </div>
         </div>
