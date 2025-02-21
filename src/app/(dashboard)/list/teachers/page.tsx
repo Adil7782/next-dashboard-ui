@@ -81,7 +81,7 @@ return( <tr key={item.id} className='border-b border-gray-200 even:bg-slate-50 t
           <td className="hidden md:table-cell text-sm"> {item.address} </td>
           <td>
             <div className="flex gap-2 items-center">
-              <Link href={`list/teachers/${item.id}`}>
+              <Link href={`teachers/${item.id}`}>
                 <button className="w-7 h-7 rounded-full flex items-center justify-center bg-lamaSky">
                   <Image src={"/view.png"} alt="" width={16} height={16} />
                 </button>
