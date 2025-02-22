@@ -1,5 +1,6 @@
 import Announcements from '@/app/components/Announcements';
 import BigCalender from '@/app/components/BigCalender';
+import FormComponent from '@/app/components/FormComponent';
 import Performance from '@/app/components/Performance';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -24,7 +25,30 @@ const TeacherPage = () => {
               />
             </div>
             <div className="w-2/3 flex flex-col justify-between gap-4">
+              <div className='flex justify-between  items-center gap-4'>
               <h1 className="text-xl font-semibold">Adil Saaly</h1>
+              
+            
+              <FormComponent table='teacher' type="update" data={
+                {id: 1,
+                  
+                  userName: "John Doe",
+                  email: "john@doe.com",
+                  password:"12345678",
+                  firstName:"john",
+                  lastName:"doe",
+                  bloodType:"ab+",
+                  dateOfBirth:"2001/04/30",
+                  sex:"male",
+
+                  img:
+                    "https://images.pexels.com/photos/2888150/pexels-photo-2888150.jpeg?auto=compress&cs=tinysrgb&w=1200",
+                  phone: "1234567890",
+                  subjects: ["Math", "Geometry"],
+                  classes: ["1B", "2A", "3C"],
+                  address: "123 Main St, Anytown, USA",}
+              } />
+                </div>
               <p className="text-sm text-gray-500">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
               </p>
