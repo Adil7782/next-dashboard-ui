@@ -1,8 +1,24 @@
 "use client"
 
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import React, { useState } from 'react'
-import TeacherForm from './forms/TeacherForm';
+// import TeacherForm from './forms/TeacherForm';
+// import StudentForm from './forms/StudentForm';
+
+const TeacherForm = dynamic(() => import("./forms/TeacherForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const StudentForm = dynamic(() => import("./forms/StudentForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+
+
+const forms : { [key:string]: (type:"create"  | "update",data:any) => JSX.Element;}={
+  teacher:(type,data)=><TeacherForm type={type} data={data} />,
+  student:(type,data)=><StudentForm type={type} data={data} />
+}
+
 
 const FormComponent = ({table,type,data,id}:{
     table: string ,
@@ -27,7 +43,11 @@ const FormComponent = ({table,type,data,id}:{
           <button className="bg-red-700 text-white p-4 rounded-md border-none w-max self-center">Delete</button>
         </form>
       )
-      : <TeacherForm type='update' data={data}/>
+       
+      : type != "delete" && (
+
+        forms [table] (type,data)
+      )
     }
 
 
