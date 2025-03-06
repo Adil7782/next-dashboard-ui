@@ -198,3 +198,7 @@ model Announcement {
   class Class? @relation(fields: [classId] , references: [id]) 
 
 }
+
+generator erd {
+  provider = "prisma-erd-generator"
+}

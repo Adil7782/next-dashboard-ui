@@ -126,9 +126,9 @@ const TeacherPage = () => {
       <div className='bg-white p-4 rounded-md shadow-md'>
         <h1 className='text-xl font-semibold'> Shortcuts </h1>
         <div className='flex  gap-4 flex-wrap mt-4 text-xs text-gray-600'>
-          <Link className='p-3 rounded-md shadow-sm bg-lamaSky' href={"/"} >Student&apos;s Classes </Link>
-          <Link className='p-3 rounded-md shadow-sm bg-lamaPurple' href={"/"} >Student&apos;s Students </Link>
-          <Link className='p-3 rounded-md shadow-sm bg-pink-200' href={"/"} >Student&apos;s Lessons </Link>
+          <Link className='p-3 rounded-md shadow-sm bg-lamaSky' href={"/"} >Student&apos;s Lessons </Link>
+          {/* <Link className='p-3 rounded-md shadow-sm bg-lamaPurple' href={"/"} >Student&apos;s Students </Link> */}
+          <Link className='p-3 rounded-md shadow-sm bg-pink-200' href={`/list/teachers?classId=${2}`} >Student&apos;s Teachers </Link>
           <Link className='p-3 rounded-md shadow-sm bg-lamaYellowLight' href={"/"} >Student&apos;s Exams </Link>
           <Link className='p-3 rounded-md shadow-sm bg-green-200' href={"/"} >Student&apos;s Assignments </Link>
         

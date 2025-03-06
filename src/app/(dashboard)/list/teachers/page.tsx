@@ -5,7 +5,7 @@ import TableSearch from '@/app/components/TableSearch'
 import { role, teachersData } from '@/lib/data'
 import { db } from '@/lib/db'
 import { ITEM_PER_PAGE } from '@/lib/page'
-import { Class, Subject, Teacher } from '@prisma/client'
+import { Class, Prisma, Subject, Teacher } from '@prisma/client'
 import { headers } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -111,11 +111,37 @@ console.log(searchParams)
   // });
 
   // const count = await db.teacher.count()
-  
+  const query : Prisma.TeacherWhereInput = {}
+  if (otherParams){
+    for (const [key,value] of Object.entries(otherParams)){
+      if (value !== undefined){
+        switch (key){
+          case "classId":
+            query.lessons = {
+              some:{
+                classId:Number(value),
+              }
+            }
+            break;
+            case "search":
+              query.name = {
+                contains: value,
+                mode:'insensitive'
+              }
+
+
+        }
+      }
+    }
+  }
+
+
+
   
   const [teachers,count] = await db.$transaction(
     [
       db.teacher.findMany({
+        where:query,
         include: {
           subjects: true,
           classes: true,
@@ -123,7 +149,9 @@ console.log(searchParams)
         take: ITEM_PER_PAGE,
         skip : ITEM_PER_PAGE*(p-1)  // think the ipp is 10. so 10 to our page think its 2 -1 = 10 so it skips first 10
       }),
-      db.teacher.count()
+      db.teacher.count({
+        where:query,
+      })
       
     ]
   )
