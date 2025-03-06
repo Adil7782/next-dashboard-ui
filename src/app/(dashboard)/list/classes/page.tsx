@@ -3,6 +3,10 @@ import Pagination from '@/app/components/Pagination'
 import Table from '@/app/components/Table'
 import TableSearch from '@/app/components/TableSearch'
 import { classesData, parentsData, role, studentsData, teachersData } from '@/lib/data'
+import { db } from '@/lib/db'
+import { ITEM_PER_PAGE } from '@/lib/page'
+import { Class, Prisma, Teacher } from '@prisma/client'
+import { count } from 'console'
 import { headers } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -35,51 +39,84 @@ const columns = [
     
 ]
 
-type Class ={
+type ClassesList = Class & {supervisor:Teacher}
+const renderRow =(item:ClassesList) =>{
+return( <tr key={item.id} className='border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight'>
+      <td className='flex items-center p-3 gap-3'>
+       
 
-    id: number;
-    name: string;
-    capacity: number;
-    grade: number;
-    supervisor: string[];
-    
+        <div className="flex flex-col">
+          <h1 className="font-semibold">{item.name}</h1>
+          
+        </div>
+      </td>
+
+      <td className="hidden md:table-cell text-sm">{item.capacity} </td>        
+      <td className="hidden md:table-cell text-sm"> {item.name[0]} </td>
+      <td className="hidden md:table-cell text-sm"> {item.supervisor.name} </td>
+      <td>
+        <div className="flex gap-2 items-center">
+         { role === "admin" && 
+
+            <> <Link href={`list/students/${item.id}`}>
+                          <FormComponent type='update' table='classes' data={item} />
+
+          </Link>
+
+          
+            <FormComponent type='delete' table='classes'  id={item.id}/>
+
+            </>
+          }
+        </div>
+      </td>
+    </tr>)
 }
 
-const ClassesList = () => {
-    
-    const renderRow =(item:Class) =>{
-return( <tr key={item.id} className='border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight'>
-          <td className='flex items-center p-3 gap-3'>
-           
+const ClassesList =  async ({  searchParams}:{searchParams: {[key:string]:string | undefined };
+}) => {
 
-            <div className="flex flex-col">
-              <h1 className="font-semibold">{item.name}</h1>
-              
-            </div>
-          </td>
+console.log(searchParams)
+  const {page,...otherParams} = searchParams
 
-          <td className="hidden md:table-cell text-sm">{item.capacity} </td>        
-          <td className="hidden md:table-cell text-sm"> {item.grade} </td>
-          <td className="hidden md:table-cell text-sm"> {item.supervisor} </td>
-          <td>
-            <div className="flex gap-2 items-center">
-             { role === "admin" && 
+  const p = page ? Number(page) : 1 // sets the default to 1st page
 
-                <> <Link href={`list/students/${item.id}`}>
-                              <FormComponent type='update' table='classes' data={item} />
+  const query : Prisma.ClassWhereInput = {}
+  if (otherParams){
+    for (const [key,value] of Object.entries(otherParams)){
+      if (value !== undefined){
+        switch (key){
+         
+            case "supervisorId":
+              query.supervisorId = value
+              break;
 
-              </Link>
+              default:
+              break;
 
-              
-                <FormComponent type='delete' table='classes'  id={item.id}/>
-
-                </>
-              }
-            </div>
-          </td>
-        </tr>)
+        }
+      }
     }
+  }
 
+  
+    const [classes,count] = await db.$transaction(
+      [
+        db.class.findMany({
+          where:query,
+          include: {
+           supervisor:true
+          },
+          take: ITEM_PER_PAGE,
+          skip : ITEM_PER_PAGE*(p-1)  // think the ipp is 10. so 10 to our page think its 2 -1 = 10 so it skips first 10
+        }),
+        db.class.count({
+          where:query,
+        })
+        
+      ]
+    )
+console.log(classes)
 
   return (
     <>
@@ -105,10 +142,10 @@ return( <tr key={item.id} className='border-b border-gray-200 even:bg-slate-50 t
         </div>
         </div>
         <div>
-        <Table columns={columns} renderRow={renderRow} data={classesData}/>
+        <Table columns={columns} renderRow={renderRow} data={classes}/>
         </div>
       
-        <Pagination/>
+        <Pagination page={p} count={count}/>
         
     </div>
     </>

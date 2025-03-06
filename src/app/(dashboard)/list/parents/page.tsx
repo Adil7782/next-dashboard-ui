@@ -84,16 +84,6 @@ console.log(searchParams)
 
   const p = page ? Number(page) : 1 // sets the default to 1st page
 
-  // const teachers = await db.teacher.findMany({
-  //   include: {
-  //     subjects: true,
-  //     classes: true,
-  //   },
-  //   take: 5,
-  //   skip : 5*(p-1)
-  // });
-
-  // const count = await db.teacher.count()
   const query : Prisma.ParentWhereInput = {}
   if (otherParams){
     for (const [key,value] of Object.entries(otherParams)){
