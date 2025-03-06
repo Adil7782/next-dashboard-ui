@@ -24,7 +24,7 @@ const FormComponent = ({table,type,data,id}:{
     table: string ,
     type: "create" | "delete" | "update";
     data?:any;
-    id?:string;
+    id?:string | number;
     
 }) => 
   {

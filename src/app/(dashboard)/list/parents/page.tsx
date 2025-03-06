@@ -3,6 +3,9 @@ import Pagination from '@/app/components/Pagination'
 import Table from '@/app/components/Table'
 import TableSearch from '@/app/components/TableSearch'
 import { parentsData, role, studentsData, teachersData } from '@/lib/data'
+import { db } from '@/lib/db'
+import { ITEM_PER_PAGE } from '@/lib/page'
+import { Parent, Prisma, Student } from '@prisma/client'
 import { headers } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -35,55 +38,101 @@ const columns = [
     
 ]
 
-type Parent ={
-    id:number;
+type ParentList = Parent & {students:Student []}
+const renderRow =(item:ParentList) =>{
+return (
+<tr
+key={item.id}
+className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
+>
+<td className="flex items-center p-3 gap-3">
+  <div className="flex flex-col">
+    <h1 className="font-semibold">{item.name}</h1>
+    <p className="text-xs text-gray-500">{item?.email}</p>
+  </div>
+</td>
 
-    students:string[];
-    name:string;
-    email?:string;
-    phone:string;
- 
-    address:string
+<td className="hidden md:table-cell text-sm">{item.students.map((student)=>student.name).join(",")} </td>
+<td className="hidden md:table-cell text-sm"> {item.phone} </td>
+<td className="hidden md:table-cell text-sm"> {item.address} </td>
+<td>
+  <div className="flex gap-2 items-center">
+  {role === "admin" && (
+    <>
+  
+   
+      {/* <button className="w-7 h-7 rounded-full flex items-center justify-center bg-lamaSky">
+              <Image src={"/edit.png"} alt="" width={16} height={16} />
+            </button> */}
+      <FormComponent type="update" table="parent" data={item} />
+
+   
+      <FormComponent type="delete" table="parent" id={item.id} />
+      </>
+    )}
+  </div>
+</td>
+</tr>
+);
 }
 
-const ParentList = () => {
-    
-    const renderRow =(item:Parent) =>{
-return (
-  <tr
-    key={item.id}
-    className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
-  >
-    <td className="flex items-center p-3 gap-3">
-      <div className="flex flex-col">
-        <h1 className="font-semibold">{item.name}</h1>
-        <p className="text-xs text-gray-500">{item?.email}</p>
-      </div>
-    </td>
+const ParentList =  async ({  searchParams}:{searchParams: {[key:string]:string | undefined };
+}) => {
 
-    <td className="hidden md:table-cell text-sm">{item.students.join(",")} </td>
-    <td className="hidden md:table-cell text-sm"> {item.phone} </td>
-    <td className="hidden md:table-cell text-sm"> {item.address} </td>
-    <td>
-      <div className="flex gap-2 items-center">
-      {role === "admin" && (
-        <>
-      
-       
-          {/* <button className="w-7 h-7 rounded-full flex items-center justify-center bg-lamaSky">
-                  <Image src={"/edit.png"} alt="" width={16} height={16} />
-                </button> */}
-          <FormComponent type="update" table="parent" data={item} />
-   
-       
-          <FormComponent type="delete" table="parent" id={item.id} />
-          </>
-        )}
-      </div>
-    </td>
-  </tr>
-);
+console.log(searchParams)
+  const {page,...otherParams} = searchParams
+
+  const p = page ? Number(page) : 1 // sets the default to 1st page
+
+  // const teachers = await db.teacher.findMany({
+  //   include: {
+  //     subjects: true,
+  //     classes: true,
+  //   },
+  //   take: 5,
+  //   skip : 5*(p-1)
+  // });
+
+  // const count = await db.teacher.count()
+  const query : Prisma.ParentWhereInput = {}
+  if (otherParams){
+    for (const [key,value] of Object.entries(otherParams)){
+      if (value !== undefined){
+        switch (key){
+         
+            case "search":
+              query.name = {
+                contains: value,
+                mode:'insensitive'
+              }
+              break;
+
+              default:
+              break;
+
+        }
+      }
     }
+  }
+
+  
+    const [parents,count] = await db.$transaction(
+      [
+        db.parent.findMany({
+          where:query,
+          include: {
+           students:true
+          },
+          take: ITEM_PER_PAGE,
+          skip : ITEM_PER_PAGE*(p-1)  // think the ipp is 10. so 10 to our page think its 2 -1 = 10 so it skips first 10
+        }),
+        db.parent.count({
+          where:query,
+        })
+        
+      ]
+    )
+
 
 
   return (
@@ -110,10 +159,10 @@ return (
         </div>
         </div>
         <div>
-        <Table columns={columns} renderRow={renderRow} data={parentsData}/>
+        <Table columns={columns} renderRow={renderRow} data={parents}/>
         </div>
       
-        <Pagination/>
+        <Pagination page={p} count={count}  />
         
     </div>
     </>

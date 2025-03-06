@@ -128,6 +128,10 @@ console.log(searchParams)
                 contains: value,
                 mode:'insensitive'
               }
+              break;
+
+              default:
+              break;
 
 
         }
