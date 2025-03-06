@@ -46,7 +46,7 @@ enum UserSex {
 
 model Teacher {
   id        String    @id @default(uuid())
-  username  String
+  username  String  @unique
   name      String
   surname  String?
   email     String @unique
